@@ -4,7 +4,7 @@
 
 The **Sales Data Analysis and Visualization Tool** is a menu-driven Python application developed using **Pandas, NumPy, Matplotlib, Seaborn, and Object-Oriented Programming (OOP)** principles.
 
-This project uses a **Coffee Sales CSV dataset** to perform data loading, exploration, cleaning, mathematical operations, searching, sorting, filtering, aggregation, statistical analysis, pivot tables, grouping, data combining, data splitting, re-indexing, and visualization.
+This project uses a **Coffee Sales CSV dataset** to perform data loading, exploration, cleaning, mathematical operations, searching, sorting, filtering, aggregation, statistical analysis, pivot tables, grouping, data combining, data splitting, re-indexing, date/time operations, and visualization.
 
 The complete functionality is encapsulated inside the **`SalesDataAnalyzer`** class.
 
@@ -23,7 +23,7 @@ The application allows users to:
 * Perform NumPy operations
 * Perform mathematical operations
 * Combine DataFrames using concatenation, merge, and join
-* Split data using groupby
+* Split data using GroupBy
 * Search, sort, and filter data
 * Calculate aggregate functions
 * Perform statistical analysis
@@ -56,29 +56,40 @@ The application allows users to:
 The project uses a **Coffee Sales Dataset** stored in:
 
 ```text
-coffe_sales.csv
+Coffe_sales.csv
 ```
 
-The dataset contains coffee sales information that can be analyzed using different Pandas, NumPy, Matplotlib, and Seaborn operations.
+The dataset contains information about coffee sales and transactions.
 
 Important columns used by the program include:
 
 ```text
-coffee_name
-money
+hour_of_day
 cash_type
+money
+coffee_name
+Time_of_Day
+Weekday
+Month_name
+Weekdaysort
+Monthsort
+Date
+Time
 ```
 
-The program also automatically searches for a date/time-related column such as:
+Some important columns are:
 
-```text
-datetime
-date
-date_time
-timestamp
-```
+* `coffee_name` – Name of the coffee
+* `money` – Sales amount
+* `cash_type` – Payment method
+* `hour_of_day` – Hour of the transaction
+* `Time_of_Day` – Time period
+* `Weekday` – Day of the week
+* `Month_name` – Month name
+* `Date` – Transaction date
+* `Time` – Transaction time
 
-The actual available columns depend on the CSV dataset.
+The program automatically searches for date/time-related columns when performing datetime operations.
 
 ---
 
@@ -138,7 +149,7 @@ Column names are displayed using:
 self.data.columns
 ```
 
-The program also removes unnecessary spaces from column names:
+The program can also remove unnecessary spaces from column names:
 
 ```python
 self.data.columns = self.data.columns.str.strip()
@@ -225,6 +236,12 @@ self.data[column].unique()
 
 This helps identify different categories present in a column.
 
+For example:
+
+```python
+self.data["coffee_name"].unique()
+```
+
 ---
 
 ## 11. Missing Values
@@ -293,9 +310,16 @@ self.data.drop_duplicates(inplace=True)
 
 # 📅 Date and Time Operations
 
-The program provides several date and time operations.
+The project provides several date and time operations.
 
-The program first searches for a suitable date/time column.
+The Coffee Sales dataset contains the following date/time-related columns:
+
+```text
+Date
+Time
+```
+
+The program searches for a suitable date/time column using the `FindDatetimeColumn()` method.
 
 Date/time conversion is performed using:
 
@@ -316,7 +340,20 @@ The `errors="coerce"` option converts invalid date values into missing values in
 
 ---
 
-## Date Extraction
+## Convert Date/Time Column
+
+A selected column can be converted to datetime format using:
+
+```python
+pd.to_datetime(
+    self.data[column],
+    errors="coerce"
+)
+```
+
+---
+
+## Create Date Column
 
 The date can be extracted using:
 
@@ -326,7 +363,7 @@ self.data["Date"] = self.data[column].dt.date
 
 ---
 
-## Time Extraction
+## Create Time Column
 
 The time can be extracted using:
 
@@ -336,7 +373,7 @@ self.data["Time"] = self.data[column].dt.time
 
 ---
 
-## Hour Extraction
+## Create Hour Column
 
 The hour is extracted using:
 
@@ -346,7 +383,7 @@ self.data["Hour"] = self.data[column].dt.hour
 
 ---
 
-## Day Extraction
+## Create Day Column
 
 The day is extracted using:
 
@@ -356,7 +393,7 @@ self.data["Day"] = self.data[column].dt.day
 
 ---
 
-## Month Extraction
+## Create Month Column
 
 The month is extracted using:
 
@@ -366,13 +403,15 @@ self.data["Month"] = self.data[column].dt.month
 
 ---
 
-## Weekday Extraction
+## Create Weekday Column
 
 The weekday name is extracted using:
 
 ```python
 self.data["Weekday"] = self.data[column].dt.day_name()
 ```
+
+These operations are useful for analyzing coffee sales according to date, time, hour, day, month, and weekday.
 
 ---
 
@@ -384,6 +423,12 @@ A Pandas column is converted into a NumPy array using:
 
 ```python
 array = self.data[column].dropna().to_numpy()
+```
+
+For this dataset, a suitable numeric column is:
+
+```text
+money
 ```
 
 ---
@@ -404,6 +449,12 @@ The program displays the type of the array:
 
 ```python
 type(array)
+```
+
+The output is:
+
+```text
+<class 'numpy.ndarray'>
 ```
 
 ---
@@ -548,7 +599,7 @@ np.array_split(array, 2)
 
 # ➕ Mathematical Operations
 
-The project provides mathematical operations on the **`money`** column of the Coffee Sales dataset.
+The project provides mathematical operations on the **`money`** column.
 
 The column is converted into numeric values using:
 
@@ -598,6 +649,8 @@ self.data["Money_Minus_10"] = self.data["money"] - 10
 ```python
 self.data["Money_Squared"] = self.data["money"] ** 2
 ```
+
+These operations demonstrate mathematical calculations using Pandas.
 
 ---
 
@@ -653,13 +706,13 @@ The program asks the user to enter a common column.
 
 The project also supports DataFrame joining.
 
-The common column is first set as an index:
+The common column can first be set as an index:
 
 ```python
 self.data.set_index(common_column)
 ```
 
-Then the DataFrames are joined using:
+Then the DataFrames can be joined using:
 
 ```python
 .join()
@@ -686,7 +739,7 @@ It uses:
 self.data.groupby(column)
 ```
 
-Example:
+For example:
 
 ```python
 groups = self.data.groupby(column)
@@ -696,13 +749,19 @@ for group_name, group_data in groups:
     print(group_data.head())
 ```
 
-This displays each group separately.
+For the Coffee Sales dataset, a suitable column is:
+
+```text
+coffee_name
+```
+
+This displays each coffee category separately.
 
 ---
 
 # 🔎 Search, Sort and Filter
 
-The project provides search, sorting, and filtering operations.
+The project provides searching, sorting, and filtering operations.
 
 ## 1. Search
 
@@ -725,6 +784,13 @@ self.data[
 ```
 
 The search is case-insensitive.
+
+For example, the user can search:
+
+```text
+Column: coffee_name
+Value: Latte
+```
 
 ---
 
@@ -749,6 +815,8 @@ self.data.sort_values(
     ascending=True
 )
 ```
+
+The `money` column can be used for sorting sales amounts.
 
 ---
 
@@ -786,17 +854,35 @@ self.data[column] <= value
 self.data[column] == value
 ```
 
-Categorical columns can also be searched using:
+For example:
 
-```python
-str.contains()
+```text
+Column: money
+Condition: >
+Value: 30
 ```
+
+This displays records where the sales amount is greater than 30.
 
 ---
 
 # 📊 Aggregate Functions
 
 The project calculates aggregate values for selected numeric columns.
+
+A suitable grouping column for this dataset is:
+
+```text
+coffee_name
+```
+
+A suitable numeric column is:
+
+```text
+money
+```
+
+The available aggregate operations are:
 
 ## Sum
 
@@ -818,6 +904,16 @@ Calculates the average value.
 
 ---
 
+## Count
+
+```python
+self.data[column].count()
+```
+
+Counts non-missing values.
+
+---
+
 ## Minimum
 
 ```python
@@ -835,26 +931,6 @@ self.data[column].max()
 ```
 
 Finds the largest value.
-
----
-
-## Count
-
-```python
-self.data[column].count()
-```
-
-Counts non-missing values.
-
----
-
-## Median
-
-```python
-self.data[column].median()
-```
-
-Calculates the middle value.
 
 ---
 
@@ -952,7 +1028,12 @@ The pivot table calculates:
 * Mean
 * Count
 
-for the selected columns.
+For the Coffee Sales dataset, an example is:
+
+```text
+Index Column: coffee_name
+Value Column: money
+```
 
 ---
 
@@ -1062,6 +1143,13 @@ ax.set_ylabel()
 
 The x-axis labels can also be rotated.
 
+For the Coffee Sales dataset:
+
+```text
+X Column: coffee_name
+Y Column: money
+```
+
 ---
 
 # 📈 2. Matplotlib Line Chart
@@ -1084,7 +1172,7 @@ ax.plot(
 )
 ```
 
-The chart is titled:
+The chart can be titled:
 
 ```text
 Daily Coffee Sales
@@ -1111,6 +1199,13 @@ ax.scatter(
 )
 ```
 
+For example:
+
+```text
+X Column: hour_of_day
+Y Column: money
+```
+
 ---
 
 # 🥧 4. Matplotlib Pie Chart
@@ -1134,6 +1229,12 @@ ax.pie(
 ```
 
 The `autopct` parameter displays percentages on the chart.
+
+A suitable categorical column is:
+
+```text
+coffee_name
+```
 
 ---
 
@@ -1159,6 +1260,8 @@ ax.hist(
 
 The `bins` parameter controls the number of intervals.
 
+The `money` column can be used for the histogram.
+
 ---
 
 # 📚 6. Matplotlib Stack Plot
@@ -1171,7 +1274,7 @@ It uses:
 ax.stackplot()
 ```
 
-The program creates weekday-based sales data and orders the weekdays as:
+The program can create weekday-based sales data and order the weekdays as:
 
 ```text
 Monday
@@ -1195,7 +1298,7 @@ The project creates multiple charts in one figure using:
 fig, axes = plt.subplots(1, 2)
 ```
 
-One subplot displays coffee sales by coffee name, while the other displays hourly sales.
+One subplot can display coffee sales by coffee name, while another can display hourly sales.
 
 This demonstrates how multiple plots can be displayed in a single figure.
 
@@ -1243,6 +1346,8 @@ sns.boxplot(
 ```
 
 A box plot helps display the distribution and possible outliers of numerical data.
+
+The `money` column can be used.
 
 ---
 
@@ -1296,6 +1401,12 @@ sns.countplot(
 )
 ```
 
+A suitable categorical column is:
+
+```text
+coffee_name
+```
+
 ---
 
 # 📊 4. Seaborn Bar Plot
@@ -1317,7 +1428,14 @@ sns.barplot(
 )
 ```
 
-The program converts the selected y-column into numeric values before creating the chart.
+The selected y-column is converted into numeric values before creating the chart.
+
+For example:
+
+```text
+X Column: coffee_name
+Y Column: money
+```
 
 ---
 
@@ -1387,11 +1505,20 @@ sns.scatterplot(
 
 This displays the relationship between two numeric variables.
 
+For example:
+
+```text
+X Column: hour_of_day
+Y Column: money
+```
+
 ---
 
 # 💾 Saving Visualizations
 
-The current visualization can be saved using:
+The project stores generated visualizations so that they can be saved later.
+
+The current plot can be saved using:
 
 ```python
 self.current_plot.savefig()
@@ -1407,7 +1534,17 @@ self.current_plot.savefig(
 )
 ```
 
-The user can enter a filename for the saved visualization.
+The program can also maintain multiple visualizations using:
+
+```python
+self.all_plots = []
+```
+
+Saved visualizations can be stored in a separate folder such as:
+
+```text
+coffee_visualizations/
+```
 
 ---
 
@@ -1423,6 +1560,12 @@ self.data.to_csv(
 ```
 
 This allows the cleaned and analyzed data to be saved for future use.
+
+Example:
+
+```text
+analyzed_sales.csv
+```
 
 ---
 
@@ -1444,12 +1587,14 @@ The class contains the complete functionality of the Sales Data Analysis and Vis
 def __init__(self):
     self.data = pd.DataFrame()
     self.current_plot = None
+    self.all_plots = []
 ```
 
 The constructor initializes:
 
 * An empty DataFrame
 * A variable to store the current plot
+* A list to store all generated plots
 
 It also applies Seaborn styling.
 
@@ -1491,13 +1636,11 @@ def FindDatetimeColumn(self):
 
 This method searches for a suitable date/time column in the dataset.
 
-It checks names such as:
+For the Coffee Sales dataset, the important date/time columns are:
 
 ```text
-datetime
-date
-date_time
-timestamp
+Date
+Time
 ```
 
 ---
@@ -1562,6 +1705,24 @@ Provides different data-cleaning operations such as:
 * Day extraction
 * Month extraction
 * Weekday extraction
+
+---
+
+## Datetime Operations
+
+```python
+def DatetimeOperations(self):
+```
+
+Provides operations for:
+
+* Converting date/time values
+* Creating Date
+* Creating Time
+* Creating Hour
+* Creating Day
+* Creating Month
+* Creating Weekday
 
 ---
 
@@ -1658,7 +1819,8 @@ Calculates:
 * Minimum
 * Maximum
 * Count
-* Median
+
+The program can perform these operations based on a selected group column and numeric value column.
 
 ---
 
@@ -1722,6 +1884,51 @@ Resets the DataFrame index using:
 ```python
 reset_index()
 ```
+
+---
+
+## Visualization
+
+```python
+def VisualizeData(self):
+```
+
+Provides two visualization libraries:
+
+* Matplotlib
+* Seaborn
+
+---
+
+## Save Visualization
+
+```python
+def SaveVisualization(self):
+```
+
+Saves generated visualizations to image files.
+
+The program can save all generated charts using the stored visualization list.
+
+---
+
+## Export Data
+
+```python
+def ExportData(self):
+```
+
+Exports the processed DataFrame into a CSV file.
+
+---
+
+## Conclusion
+
+```python
+def Conclusion(self):
+```
+
+Displays a summary of the Coffee Sales analysis, including important sales-related information obtained from the dataset.
 
 ---
 
@@ -1811,10 +2018,10 @@ The visualization section provides two choices:
 Matplotlib provides:
 
 ```text
-Bar
-Line
-Scatter
-Pie
+Bar Chart
+Line Chart
+Scatter Plot
+Pie Chart
 Histogram
 Stack Plot
 Subplots
@@ -1868,29 +2075,53 @@ Scatter Plot
 
 ```text
 Start
+
   ↓
+
 Create SalesDataAnalyzer Object
+
   ↓
+
 Display Main Menu
+
   ↓
+
 Load Coffee Sales Dataset
+
   ↓
+
 Explore / Clean / Analyze Data
+
   ↓
+
 Perform DataFrame Operations
+
   ↓
+
 Perform NumPy Operations
+
   ↓
+
 Create Visualizations
+
   ↓
+
 Save Visualization / Export Data
+
   ↓
+
 Display Conclusion
+
   ↓
+
 Return to Main Menu
+
   ↓
+
 Choose Exit
+
   ↓
+
 End
 ```
 
@@ -1902,7 +2133,7 @@ End
 Project-9/
 │
 ├── DataAnalysis.ipynb
-├── coffe_sales.csv
+├── Coffe_sales.csv
 └── README.md
 ```
 
@@ -1923,15 +2154,17 @@ The notebook contains:
 * Statistical analysis
 * Pivot tables
 * GroupBy and Transform
+* Datetime operations
 * Matplotlib visualizations
 * Seaborn visualizations
+* Save visualization functionality
 * Export functionality
 * Conclusion
 * Menu-driven program
 
-### `coffe_sales.csv`
+### `Coffe_sales.csv`
 
-Contains the Coffee Sales dataset used for data analysis and visualization.
+Contains the **Coffee Sales dataset** used for data analysis and visualization.
 
 ### `README.md`
 
@@ -1966,7 +2199,7 @@ DataAnalysis.ipynb
 Make sure:
 
 ```text
-coffe_sales.csv
+Coffe_sales.csv
 ```
 
 is located in the same folder as the notebook.
@@ -1977,7 +2210,7 @@ The project structure should be:
 Project-9/
 │
 ├── DataAnalysis.ipynb
-├── coffe_sales.csv
+├── Coffe_sales.csv
 └── README.md
 ```
 
@@ -1995,10 +2228,10 @@ pip install pandas numpy matplotlib seaborn
 
 ## Step 5: Load the Dataset
 
-The CSV file is loaded using:
+The CSV file can be loaded using:
 
 ```python
-pd.read_csv("coffe_sales.csv")
+pd.read_csv("Coffe_sales.csv")
 ```
 
 or through the program's file path input.
@@ -2030,18 +2263,18 @@ The main menu will appear.
 ## Loading the Dataset
 
 ```text
-Enter CSV file path: coffe_sales.csv
+Enter CSV file path: Coffe_sales.csv
 
 Dataset loaded successfully!
 
 First 5 Rows:
 
-        date        cash_type        money      coffee_name
-0    ...           card            ...        Latte
-1    ...           card            ...        Cappuccino
-2    ...           cash            ...        Americano
-3    ...           card            ...        Latte
-4    ...           card            ...        Espresso
+   hour_of_day cash_type  money     coffee_name
+0           ...      card   ...          Latte
+1           ...      card   ...          Latte
+2           ...      cash   ...       Americano
+3           ...      card   ...  Hot Chocolate
+4           ...      card   ...          Latte
 
 Dataset Shape:
 
@@ -2057,7 +2290,7 @@ Select numeric column: money
 
 NumPy Array:
 
-[2.50 3.00 2.75 4.00 3.50 ...]
+[38.7 28.9 38.7 28.9 ...]
 
 Array Type:
 
@@ -2090,24 +2323,70 @@ Standard Deviation:
 
 ---
 
+## Example of Aggregate Function
+
+```text
+Enter GroupBy column: coffee_name
+
+Enter Value column: money
+
+1. Sum
+2. Mean
+3. Count
+4. Min
+5. Max
+
+Enter choice: 1
+```
+
+The program displays the total sales amount for each coffee type.
+
+---
+
 ## Example of Filtering
 
 ```text
 Select column: money
 
 Enter condition:
+
 1. >
 2. <
 3. >=
 4. <=
 5. ==
 
-Enter value: 3
+Enter choice: 1
 
-Filtered Data:
-
-Rows where money > 3
+Enter value: 30
 ```
+
+The program displays rows where:
+
+```text
+money > 30
+```
+
+---
+
+## Example of Date and Time Operation
+
+```text
+Enter datetime/date/time column: Time
+
+1. Convert Column
+2. Create Date Column
+3. Create Time Column
+4. Create Hour Column
+5. Create Day Column
+6. Create Month Column
+7. Create Weekday Column
+8. Back
+
+Enter choice: 4
+```
+
+This creates an hour column from the transaction time.
 
 ---
 
@@ -2147,8 +2426,10 @@ For example, while loading the CSV file:
 ```python
 try:
     self.data = pd.read_csv(file_path)
+
 except FileNotFoundError:
     print("Error: File not found.")
+
 except Exception as e:
     print("Error while loading dataset:")
     print(e)
@@ -2189,11 +2470,12 @@ This project demonstrates:
 * Pivot tables
 * DataFrame merging
 * DataFrame joining
-* Data concatenation
+* DataFrame concatenation
 * Data splitting
 * Searching
 * Sorting
 * Filtering
+* Datetime operations
 * Data visualization
 
 ---
@@ -2264,7 +2546,7 @@ Through this project, the following concepts are practiced:
 
 # 💼 Business Analysis
 
-The project can be used to understand coffee sales data from different perspectives.
+The project can be used to understand Coffee Sales data from different perspectives.
 
 The analysis can help identify:
 
@@ -2276,8 +2558,10 @@ The analysis can help identify:
 * Most sold coffee
 * Most frequently used payment method
 * Sales by coffee type
+* Sales by weekday
 * Daily sales patterns
 * Hourly sales patterns
+* Monthly sales patterns
 * Sales distribution
 * Relationships between numerical variables
 
@@ -2291,8 +2575,8 @@ The **Sales Data Analysis and Visualization Tool** demonstrates how Python can b
 
 The project combines **Pandas, NumPy, Matplotlib, Seaborn, and Object-Oriented Programming** to create a practical menu-driven data analysis application.
 
-It provides hands-on practice with **data loading, exploration, cleaning, manipulation, mathematical operations, statistical analysis, searching, sorting, filtering, aggregation, grouping, pivot tables, re-indexing, and data visualization**.
+It provides hands-on practice with **data loading, exploration, cleaning, manipulation, mathematical operations, statistical analysis, searching, sorting, filtering, aggregation, grouping, pivot tables, re-indexing, date/time operations, and data visualization**.
 
-The project also demonstrates how analyzed sales data can be presented through different **Matplotlib and Seaborn visualizations** and exported for further use.
+The project also demonstrates how analyzed sales data can be presented through different **Matplotlib and Seaborn visualizations**, saved for later use, and exported as a CSV file.
 
 Overall, this project provides practical experience in building a complete **Sales Data Analysis and Visualization Tool using Python**.
